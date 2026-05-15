@@ -9,19 +9,19 @@ return new class extends Migration
     
     public function up(): void
     {
-        Schema::create('summaries', function(Blueprint $table){
+        Schema::create('reviews', function(Blueprint $table){
             $table->id();
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
-            $table->text('summary_content');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->tinyInteger('rating')->unsigned()->default(0);
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
-        Schema::dropIfExists('summaries');
+        Schema::dropIfExists('reviews');
     }
 };
