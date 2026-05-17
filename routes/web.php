@@ -24,6 +24,13 @@ Route::middleware(['auth'])->group(function () {
     // Rute khusus Reader
     Route::middleware(['role:reader'])->group(function () {
         Route::get('/reader/dashboard', [DashboardController::class, 'reader'])->name('reader.dashboard');
+
+        // Halaman untuk Reader (Katalog & Ruang Baca)
+        Route::get('/reader', [ReviewController::class, 'index'])->name('reader.index');
+        Route::get('/reader/baca/{id}', [ReviewController::class, 'baca'])->name('reader.baca');
+
+        // Logika Backend untuk simpan rating & ulasan
+        Route::post('/reader/review/{naskah_id}', [ReviewController::class, 'store'])->name('reader.review.store');
     });
 
     // Rute khusus Publisher
