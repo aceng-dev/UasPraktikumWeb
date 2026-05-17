@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Landing Page Utama
@@ -34,6 +35,18 @@ Route::middleware(['auth'])->group(function () {
     // Rute khusus Buyer
     Route::middleware(['role:buyer'])->group(function () {
         Route::get('/buyer/dashboard', [DashboardController::class, 'buyer'])->name('buyer.dashboard');
+        Route::get('/buyer/katalog', [OrderController::class, 'katalog'])
+        ->name('buyer.katalog');
+        Route::get('/buyer/keranjang', [OrderController::class, 'keranjang'])
+        ->name('buyer.keranjang');
+        Route::post('/buyer/cart/tambah', [OrderController::class, 'tambahKeKeranjang'])
+        ->name('buyer.cart.tambah');
+        Route::delete('/buyer/cart/hapus/{id}', [OrderController::class, 'hapusDariKeranjang'])
+        ->name('buyer.cart.hapus');
+        Route::post('/buyer/checkout', [OrderController::class, 'checkout'])
+        ->name('buyer.checkout');
+        Route::get('/buyer/riwayat', [OrderController::class, 'riwayat'])
+        ->name('buyer.riwayat');
     });
 });
 
