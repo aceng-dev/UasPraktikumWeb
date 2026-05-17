@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 // Landing Page Utama
@@ -30,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reader/baca/{id}', [ReviewController::class, 'baca'])->name('reader.baca');
 
         // Logika Backend untuk simpan rating & ulasan
-        Route::post('/reader/review/{naskah_id}', [ReviewController::class, 'store'])->name('reader.review.store');
+        Route::post('/reader/review/{naskah_id}', [ReviewController::class, 'storeReview'])->name('reader.review.store');
     });
 
     // Rute khusus Publisher
