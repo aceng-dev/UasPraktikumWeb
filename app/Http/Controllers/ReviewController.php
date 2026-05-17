@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use App\Models\Naskah; // Pastikan sesuaikan dengan nama Model naskah di proyek kalian
-// use App\Models\Review; // Pastikan sesuaikan dengan nama Model review kalian
 
 class ReviewController extends Controller
 {
     // 1. Menampilkan Halaman Katalog
     public function index()
     {
-        // Contoh data dummy jika model belum siap. 
-        // Nanti ganti dengan: $naskahs = Naskah::where('status', 'published')->get();
         $naskahs = collect([
             ['id' => 1, 'judul' => 'Misteri Kota Palu', 'author' => 'Dimas', 'tipe' => 'Gratis', 'sinopsis' => 'Kisah misteri di balik senja...'],
             ['id' => 2, 'judul' => 'Belajar Laravel Mobile', 'author' => 'Budi', 'tipe' => 'Berbayar', 'sinopsis' => 'Panduan lengkap dari nol sampai mahir.'],
@@ -24,23 +20,47 @@ class ReviewController extends Controller
     // 2. Menampilkan Ruang Baca Nyaman
     public function baca($id)
     {
-        // Nanti ganti dengan: $naskah = Naskah::findOrFail($id);
-        // Contoh data dummy naskah detail:
-        $naskah = [
-            'id' => $id,
-            'judul' => 'Misteri Kota Palu',
-            'author' => 'Dimas',
-            'konten' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-            'reviews' => [
-                ['user' => 'Andi', 'rating' => 5, 'komentar' => 'Ceritanya seru banget, parah!'],
-                ['user' => 'Siti', 'rating' => 4, 'komentar' => 'Suka dengan gaya bahasanya yang mengalir.'],
+        $koleksiNaskah = [
+            1 => [
+                'id' => 1,
+                'judul' => 'Misteri Kota Palu',
+                'author' => 'Dimas',
+                'konten' => 'Ini adalah isi konten untuk naskah Pertama tentang Misteri Kota Palu. Cerita dimulai pada suatu senja di Teluk Palu, di mana angin berhembus tidak seperti biasanya...',
+                'reviews' => [
+                    ['user' => 'Andi', 'rating' => 5, 'komentar' => 'Ceritanya seru banget, parah!'],
+                    ['user' => 'Siti', 'rating' => 4, 'komentar' => 'Suka dengan gaya bahasanya yang mengalir.'],
+                ]
+            ],
+            2 => [
+                'id' => 2,
+                'judul' => 'Belajar Laravel Mobile',
+                'author' => 'Budi',
+                'konten' => 'Ini adalah isi konten untuk naskah Kedua tentang Belajar Laravel Mobile. Pada bab ini, kita akan membedah bagaimana cara mengintegrasikan sistem backend Laravel dengan aplikasi mobile...',
+                'reviews' => [
+                    ['user' => 'Rian', 'rating' => 5, 'komentar' => 'Sangat membantu untuk tugas akhir saya!'],
+                ]
             ]
         ];
+
+        $naskah = $koleksiNaskah[$id] ?? [
+            'id' => $id,
+            'judul' => 'Naskah Tidak Ditemukan',
+            'author' => 'Anonim',
+            'konten' => 'Maaf, konten naskah digital ini belum tersedia.',
+            'reviews' => []
+        ];
+
+        // AMBIL ULASAN TAMBAHAN DARI SESSION (JIKA ADA)
+        // Kita ambil ulasan yang pernah di-submit user khusus untuk ID naskah ini
+        $customReviews = session()->get("custom_reviews.{$id}", []);
+        
+        // Gabungkan ulasan bawaan dummy dengan ulasan baru dari session
+        $naskah['reviews'] = array_merge($naskah['reviews'], $customReviews);
 
         return view('reader', ['page' => 'baca', 'naskah' => $naskah]);
     }
 
-    // 3. Menyimpan Rating dan Ulasan
+    // 3. Menyimpan Rating dan Ulasan (Simulasi via Session)
     public function storeReview(Request $request, $naskah_id)
     {
         $request->validate([
@@ -48,13 +68,18 @@ class ReviewController extends Controller
             'komentar' => 'required|string|max:500',
         ]);
 
-        // Logika simpan ke database (sesuaikan dengan struktur table kalian)
-        // Review::create([
-        //     'user_id' => auth()->id(), // jika ada sistem login
-        //     'naskah_id' => $naskah_id,
-        //     'rating' => $request->rating,
-        //     'komentar' => $request->komentar,
-        // ]);
+        // Ambil nama user yang sedang login, atau gunakan 'Pembaca Anonim' jika tidak ada
+        $namaUser = auth()->user()->name ?? 'Pembaca Anonim';
+
+        // Buat struktur data ulasan baru
+        $newReview = [
+            'user' => $namaUser,
+            'rating' => (int)$request->rating,
+            'komentar' => $request->komentar
+        ];
+
+        // Simpan ke dalam Session Array berdasarkan ID naskahnya
+        session()->push("custom_reviews.{$naskah_id}", $newReview);
 
         return redirect()->back()->with('success', 'Ulasan dan rating berhasil dikirim!');
     }
