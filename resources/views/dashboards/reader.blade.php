@@ -136,4 +136,24 @@
                             @if(isset($naskah['reviews']) && count($naskah['reviews']) > 0)
                                 @foreach($naskah['reviews'] as $rev)
                                     <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
-                                        <div class="flex justify-between
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-semibold text-sm text-gray-900">{{ $rev['user'] }}</span>
+                                            <span class="text-amber-500 text-xs">
+                                                {{ str_repeat('★', $rev['rating']) }}{{ str_repeat('☆', 5 - $rev['rating']) }}
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-600 text-xs leading-relaxed">{{ $rev['komentar'] }}</p>
+                                    </div>
+                                @endforeach
+                            @else
+                                <p class="text-xs text-zinc-400 italic">Belum ada ulasan untuk naskah ini.</p>
+                            @endif
+                        </div>
+                    </div>
+                </div> </div>
+        @endif
+
+    </div>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ class ReviewController extends Controller
             ['id' => 2, 'judul' => 'Belajar Laravel Mobile', 'author' => 'Budi', 'tipe' => 'Berbayar', 'sinopsis' => 'Panduan lengkap dari nol sampai mahir.'],
         ]);
 
-        return view('reader', ['page' => 'katalog', 'naskahs' => $naskahs]);
+        return view('dashboards.reader', ['page' => 'katalog', 'naskahs' => $naskahs]);
     }
 
     // 2. Menampilkan Ruang Baca Nyaman
@@ -57,7 +57,7 @@ class ReviewController extends Controller
         // Gabungkan ulasan bawaan dummy dengan ulasan baru dari session
         $naskah['reviews'] = array_merge($naskah['reviews'], $customReviews);
 
-        return view('reader', ['page' => 'baca', 'naskah' => $naskah]);
+        return view('dashboards.reader', ['page' => 'baca', 'naskah' => $naskah]);
     }
 
     // 3. Menyimpan Rating dan Ulasan (Simulasi via Session)

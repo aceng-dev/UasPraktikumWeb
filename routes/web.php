@@ -24,7 +24,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Rute khusus Reader
     Route::middleware(['role:reader'])->prefix('reader')->name('reader.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'reader'])->name('dashboard');
+        Route::get('/dashboard', [ReviewController::class, 'index'])->name('dashboard');
         Route::get('/', [ReviewController::class, 'index'])->name('index');
         Route::get('/baca/{id}', [ReviewController::class, 'baca'])->name('baca');
 
