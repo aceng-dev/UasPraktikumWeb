@@ -83,4 +83,26 @@ class ReviewController extends Controller
 
         return redirect()->back()->with('success', 'Ulasan dan rating berhasil dikirim!');
     }
+
+    // 4. Ringkas naskah dengan fitur AI sederhana
+    public function summary(Request $request, $id)
+    {
+        $request->validate([
+            'konten_naskah' => 'required|string',
+        ]);
+
+        $konten = trim($request->input('konten_naskah'));
+        $kalimat = preg_split('/(?<=[.?!])\s+/', $konten, -1, PREG_SPLIT_NO_EMPTY);
+
+        if (!$konten || empty($kalimat)) {
+            return redirect()->back()->with('error_ai', 'Konten naskah tidak tersedia untuk di-ringkas.');
+        }
+
+        $ringkasan = count($kalimat) <= 3
+            ? implode(' ', $kalimat)
+            : implode(' ', array_slice($kalimat, 0, 3));
+
+        session()->flash('hasil_ai', "Ringkasan singkat:\n\n{$ringkasan}");
+        return redirect()->back();
+    }
 }

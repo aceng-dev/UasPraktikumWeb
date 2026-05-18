@@ -23,15 +23,14 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Rute khusus Reader
-    Route::middleware(['role:reader'])->group(function () {
-        Route::get('/reader/dashboard', [DashboardController::class, 'reader'])->name('reader.dashboard');
-
-        // Halaman untuk Reader (Katalog & Ruang Baca)
-        Route::get('/reader', [ReviewController::class, 'index'])->name('reader.index');
-        Route::get('/reader/baca/{id}', [ReviewController::class, 'baca'])->name('reader.baca');
+    Route::middleware(['role:reader'])->prefix('reader')->name('reader.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'reader'])->name('dashboard');
+        Route::get('/', [ReviewController::class, 'index'])->name('index');
+        Route::get('/baca/{id}', [ReviewController::class, 'baca'])->name('baca');
 
         // Logika Backend untuk simpan rating & ulasan
-        Route::post('/reader/review/{naskah_id}', [ReviewController::class, 'storeReview'])->name('reader.review.store');
+        Route::post('/review/{naskah_id}', [ReviewController::class, 'storeReview'])->name('review.store');
+        Route::post('/summary/{id}', [ReviewController::class, 'summary'])->name('summary');
     });
 
     // Rute khusus Publisher
