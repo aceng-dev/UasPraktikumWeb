@@ -38,6 +38,45 @@
                 @endforeach
             </div>
 
+            <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Reader - Perpustakaan Digital</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans">
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        
+        {{-- ================= TAMPILAN KATALOG NASKAH ================= --}}
+        @if($page == 'katalog')
+            <header class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Katalog Naskah Digital</h1>
+                <p class="text-gray-600">Jelajahi karya-karya terbaik dari para Author kami.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach($naskahs as $naskah)
+                    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $naskah['tipe'] == 'Gratis' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
+                                    {{ $naskah['tipe'] }}
+                                </span>
+                                <span class="text-sm text-gray-500">Oleh: {{ $naskah['author'] }}</span>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ $naskah['judul'] }}</h2>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4">{{ $naskah['sinopsis'] }}</p>
+                        </div>
+                        
+                        <a href="{{ route('reader.baca', $naskah['id']) }}" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition">
+                            Baca Naskah
+                        </a>
+                    </div>
+                @endforeach
+            </div>
 
         {{-- ================= TAMPILAN RUANG BACA NYAMAN & REVIEW ================= --}}
         @elseif($page == 'baca')
