@@ -3,17 +3,13 @@
 namespace App\Ai\Agents;
 
 use Laravel\Ai\Contracts\Agent;
-use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Promptable;
 use Stringable;
 
-class ReaderAgent implements Agent, Conversational
+class ReaderAgent implements Agent
 {
     use Promptable;
 
-    /**
-     * Dapatkan instruksi baku (System Prompt) yang harus dipatuhi AI.
-     */
     public function instructions(): Stringable|string
     {
         return "Anda adalah AI Ringkasan Buku Digital (Reader Assistant). 

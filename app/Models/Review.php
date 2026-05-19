@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    protected $fillable = ['book_id', 'user_id', 'rating', 'comment'];
+    protected $fillable = ['book_id', 'user_id', 'rating', 'komentar'];
 
     public function book()
     {
@@ -13,7 +13,7 @@ class Review extends Model
     }
 
 
-    public function reader()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

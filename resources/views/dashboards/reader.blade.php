@@ -22,16 +22,16 @@
                     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-100 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-2">
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $naskah['tipe'] == 'Gratis' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
-                                    {{ $naskah['tipe'] }}
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $naskah->price == 0 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
+                                    {{ $naskah->price == 0 ? 'Gratis' : 'Berbayar' }}
                                 </span>
-                                <span class="text-sm text-gray-500">Oleh: {{ $naskah['author'] }}</span>
+                                <span class="text-sm text-gray-500">Oleh: {{ $naskah->author->name ?? 'Unknown' }}</span>
                             </div>
-                            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ $naskah['judul'] }}</h2>
-                            <p class="text-gray-600 text-sm line-clamp-3 mb-4">{{ $naskah['sinopsis'] }}</p>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ $naskah->title }}</h2>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4">{{ Str::limit($naskah->content, 150) }}</p>
                         </div>
                         
-                        <a href="{{ route('reader.baca', $naskah['id']) }}" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition">
+                        <a href="{{ route('reader.baca', $naskah->id) }}" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition">
                             Baca Naskah
                         </a>
                     </div>
@@ -54,9 +54,9 @@
                                 ✨ AI Academic Insight & Summary
                             </div>
                             
-                            <form action="{{ route('reader.summary', $naskah['id']) }}" method="POST" class="m-0">
+                            <form action="{{ route('reader.summary', $naskah->id) }}" method="POST" class="m-0">
                                 @csrf
-                                <input type="hidden" name="konten_naskah" value="{{ $naskah['konten'] }}">
+                                <input type="hidden" name="konten_naskah" value="{{ $naskah->content }}">
                                 <button type="submit" class="bg-white hover:bg-zinc-100 text-indigo-700 text-xs font-bold uppercase px-4 py-2 rounded-md shadow-sm transition flex items-center gap-1 cursor-pointer">
                                     🚀 Jalankan AI Summary
                                 </button>
@@ -82,12 +82,12 @@
 
                     <div class="bg-amber-50/40 border border-amber-100 rounded-xl p-8 shadow-sm">
                         <header class="border-b border-amber-200/60 pb-4 mb-6">
-                            <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{{ $naskah['judul'] }}</h1>
-                            <p class="text-gray-600 font-medium">Karya: {{ $naskah['author'] }}</p>
+                            <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{{ $naskah->title }}</h1>
+                            <p class="text-gray-600 font-medium">Karya: {{ $naskah->author->name ?? 'Unknown' }}</p>
                         </header>
 
                         <article class="prose prose-lg font-serif text-gray-800 leading-relaxed tracking-wide text-justify">
-                            {{ $naskah['konten'] }}
+                            {{ $naskah->content }}
                         </article>
                         
                         <div class="mt-8 pt-4 border-t border-amber-200/60 flex justify-end">
@@ -106,7 +106,7 @@
                             <div class="bg-green-100 text-green-800 p-3 rounded-md text-sm mb-4">{{ session('success') }}</div>
                         @endif
 
-                        <form action="{{ route('reader.review.store', $naskah['id']) }}" method="POST" class="space-y-4">
+                        <form action="{{ route('reader.review.store', $naskah->id) }}" method="POST" class="space-y-4">
                             @csrf
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Rating Bintang</label>
@@ -133,16 +133,16 @@
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">Ulasan Pembaca</h3>
                         <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                            @if(isset($naskah['reviews']) && count($naskah['reviews']) > 0)
-                                @foreach($naskah['reviews'] as $rev)
+                            @if($naskah->reviews && $naskah->reviews->count() > 0)
+                                @foreach($naskah->reviews as $rev)
                                     <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
                                         <div class="flex justify-between items-center mb-1">
-                                            <span class="font-semibold text-sm text-gray-900">{{ $rev['user'] }}</span>
+                                            <span class="font-semibold text-sm text-gray-900">{{ $rev->user->name ?? 'Anonim' }}</span>
                                             <span class="text-amber-500 text-xs">
-                                                {{ str_repeat('★', $rev['rating']) }}{{ str_repeat('☆', 5 - $rev['rating']) }}
+                                                {{ str_repeat('★', $rev->rating) }}{{ str_repeat('☆', 5 - $rev->rating) }}
                                             </span>
                                         </div>
-                                        <p class="text-gray-600 text-xs leading-relaxed">{{ $rev['komentar'] }}</p>
+                                        <p class="text-gray-600 text-xs leading-relaxed">{{ $rev->komentar }}</p>
                                     </div>
                                 @endforeach
                             @else
@@ -150,7 +150,8 @@
                             @endif
                         </div>
                     </div>
-                </div> </div>
+                </div>
+            </div>
         @endif
 
     </div>
