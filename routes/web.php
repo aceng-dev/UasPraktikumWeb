@@ -14,7 +14,8 @@ Route::middleware(['auth'])->group(function () {
     
     // Rute khusus Admin
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
+        Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
+        Route::delete('/admin/user/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('admin.delete-user');
     });
 
     // Rute khusus Author
