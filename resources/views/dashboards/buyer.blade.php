@@ -3,187 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buyer - Toko Buku</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Buyer Dashboard — AnoKind</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #020617; --surface: #0f172a; --border: rgba(255,255,255,0.1);
+            --text: #f1f5f9; --muted: #94a3b8; --muted2: #64748b;
+            --amber: #f59e0b; --amber-dim: rgba(245,158,11,0.15);
+            --amber-ring: rgba(245,158,11,0.2); --amber-text: #fcd34d;
+            --danger: #f87171; --success: #4ade80;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 0; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sb-brand { padding: 0 1.5rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 0.5rem; }
+        .sb-logo { font-size: 1.4rem; font-weight: 700; color: #fff; }
+        .sb-logo span { color: var(--amber-text); }
+        .sb-role { display: inline-block; margin-top: 0.4rem; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber-text); background: var(--amber-dim); padding: 0.15rem 0.5rem; border-radius: 999px; }
+        .sb-nav { flex: 1; padding: 0.5rem 0; }
+        .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1.5rem; color: var(--muted); text-decoration: none; font-size: 0.875rem; border-right: 3px solid transparent; transition: all 0.15s; }
+        .nav-item:hover, .nav-item.active { color: var(--text); background: var(--amber-dim); border-right-color: var(--amber); }
+        .nav-icon { font-size: 1rem; width: 1.1rem; text-align: center; flex-shrink: 0; }
+        .sb-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted2); }
+        .sb-footer strong { display: block; color: var(--text); margin-bottom: 0.15rem; }
+        .sb-footer a { color: var(--danger); text-decoration: none; font-size: 0.8rem; }
+        .main { flex: 1; padding: 2.5rem; overflow-x: hidden; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 1.75rem; font-weight: 700; color: #fff; }
+        .page-header p { color: var(--muted); margin-top: 0.35rem; font-size: 0.9rem; }
+        .alert-success { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.25); color: var(--success); border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 500; }
+        .stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 1rem; padding: 1.25rem 1.5rem; flex: 1; min-width: 130px; }
+        .stat-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted2); }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #fff; margin-top: 0.25rem; }
+        .card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .card-header h2 { font-size: 1rem; font-weight: 600; color: #fff; }
+        .card-body { padding: 1.25rem 1.5rem; }
+        .empty-state { text-align: center; padding: 3rem 2rem; color: var(--muted2); }
+        .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5; }
+        .empty-state h3 { font-size: 1rem; color: var(--muted); margin-bottom: 0.4rem; }
+        .empty-state p { font-size: 0.875rem; margin-bottom: 1.25rem; }
+        .btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 1.25rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s; }
+        .btn-amber { background: var(--amber); color: #020617; }
+        .btn-amber:hover { background: #fbbf24; }
+        @media (max-width: 768px) { .sidebar { width: 60px; } .sb-brand, .nav-item span:not(.nav-icon), .sb-footer { display: none; } .main { padding: 1.5rem; } }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 
-{{-- NAVBAR --}}
-<nav class="bg-white shadow px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-blue-600">📚 Toko Buku</h1>
-    <div class="flex gap-4">
-        <a href="{{ route('buyer.katalog') }}" class="text-gray-600 hover:text-blue-600">Katalog</a>
-        <a href="{{ route('buyer.keranjang') }}" class="text-gray-600 hover:text-blue-600">🛒 Keranjang</a>
-        <a href="{{ route('buyer.riwayat') }}" class="text-gray-600 hover:text-blue-600">Riwayat</a>
-    </div>
-</nav>
-
-<div class="max-w-5xl mx-auto px-4 py-8">
-
-    {{-- FLASH MESSAGE --}}
-    @if(session('success'))
-        <div class="bg-green-100 text-green-700 px-4 py-3 rounded mb-6">
-            {{ session('success') }}
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sb-brand">
+            <div class="sb-logo">Ano<span>Kind</span></div>
+            <span class="sb-role">Buyer</span>
         </div>
-    @endif
-    @if(session('error'))
-        <div class="bg-red-100 text-red-700 px-4 py-3 rounded mb-6">
-            {{ session('error') }}
+        <nav class="sb-nav">
+            <a href="#" class="nav-item active"><span class="nav-icon">📊</span><span>Dashboard</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">🛍️</span><span>Belanja</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">📦</span><span>Pesanan Saya</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">❤️</span><span>Favorit</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">💳</span><span>Metode Pembayaran</span></a>
+        </nav>
+        <div class="sb-footer">
+            <strong>{{ Auth::user()->name }}</strong>
+            {{ Auth::user()->email }}<br><br>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Keluar</a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">@csrf</form>
         </div>
-    @endif
+    </aside>
 
-
-    {{-- ================================ --}}
-    {{-- HALAMAN KATALOG --}}
-    {{-- ================================ --}}
-    @isset($books)
-    <h2 class="text-2xl font-bold mb-6">📖 Katalog Buku</h2>
-
-    @if($books->isEmpty())
-        <p class="text-gray-500">Belum ada buku tersedia.</p>
-    @else
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            @foreach($books as $book)
-            <div class="bg-white rounded-lg shadow p-4">
-                <h3 class="font-bold text-lg">{{ $book->title }}</h3>
-                <p class="text-gray-500 text-sm mb-1">{{ $book->author ?? '-' }}</p>
-                <p class="text-blue-600 font-semibold mb-4">
-                    Rp {{ number_format($book->price, 0, ',', '.') }}
-                </p>
-
-                {{-- Form tambah ke keranjang --}}
-                <form action="{{ route('buyer.cart.tambah') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="book_id" value="{{ $book->id }}">
-                    <div class="flex items-center gap-2 mb-3">
-                        <label class="text-sm text-gray-600">Qty:</label>
-                        <input type="number" name="quantity" value="1" min="1"
-                            class="w-16 border rounded px-2 py-1 text-sm">
-                    </div>
-                    <button type="submit"
-                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm">
-                        + Keranjang
-                    </button>
-                </form>
-            </div>
-            @endforeach
-        </div>
-    @endif
-    @endisset
-
-
-    {{-- ================================ --}}
-    {{-- HALAMAN KERANJANG --}}
-    {{-- ================================ --}}
-    @isset($carts)
-    <h2 class="text-2xl font-bold mb-6">🛒 Keranjang Belanja</h2>
-
-    @if($carts->isEmpty())
-        <p class="text-gray-500">Keranjang kamu kosong. <a href="{{ route('buyer.katalog') }}" class="text-blue-600 underline">Belanja sekarang</a></p>
-    @else
-        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-gray-600">
-                    <tr>
-                        <th class="text-left px-4 py-3">Buku</th>
-                        <th class="text-center px-4 py-3">Qty</th>
-                        <th class="text-right px-4 py-3">Subtotal</th>
-                        <th class="text-center px-4 py-3">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $total = 0; @endphp
-                    @foreach($carts as $cart)
-                    @php $subtotal = $cart->book->price * $cart->quantity; $total += $subtotal; @endphp
-                    <tr class="border-t">
-                        <td class="px-4 py-3">
-                            <p class="font-semibold">{{ $cart->book->title }}</p>
-                            <p class="text-gray-400">Rp {{ number_format($cart->book->price, 0, ',', '.') }}</p>
-                        </td>
-                        <td class="px-4 py-3 text-center">{{ $cart->quantity }}</td>
-                        <td class="px-4 py-3 text-right font-semibold">
-                            Rp {{ number_format($subtotal, 0, ',', '.') }}
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <form action="{{ route('buyer.cart.hapus', $cart->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:underline text-xs">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot class="bg-gray-50">
-                    <tr>
-                        <td colspan="2" class="px-4 py-3 font-bold">Total</td>
-                        <td class="px-4 py-3 text-right font-bold text-blue-600">
-                            Rp {{ number_format($total, 0, ',', '.') }}
-                        </td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
+    <main class="main">
+        <div class="page-header">
+            <h1>🛒 Buyer Dashboard</h1>
+            <p>Belanja dan kelola koleksi buku berkualitas Anda</p>
         </div>
 
-        {{-- Form Checkout --}}
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="font-bold text-lg mb-4">Proses Checkout</h3>
-            <form action="{{ route('buyer.checkout') }}" method="POST">
-                @csrf
-                <label class="block text-sm text-gray-600 mb-1">Alamat Pengiriman</label>
-                <textarea name="shipping_address" rows="3" required
-                    class="w-full border rounded px-3 py-2 mb-4 text-sm"
-                    placeholder="Masukkan alamat lengkap..."></textarea>
-                <button type="submit"
-                    class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-                    ✅ Checkout Sekarang
-                </button>
-            </form>
+        @if(session('success'))
+            <div class="alert-success">✓ {{ session('success') }}</div>
+        @endif
+
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-label">Total Buku</div><div class="stat-value">0</div></div>
+            <div class="stat-card"><div class="stat-label">Pesanan Aktif</div><div class="stat-value">0</div></div>
+            <div class="stat-card"><div class="stat-label">Total Belanja</div><div class="stat-value">Rp 0</div></div>
+            <div class="stat-card"><div class="stat-label">Poin Reward</div><div class="stat-value">0</div></div>
         </div>
-    @endif
-    @endisset
 
-
-    {{-- ================================ --}}
-    {{-- HALAMAN RIWAYAT ORDER --}}
-    {{-- ================================ --}}
-    @isset($orders)
-    <h2 class="text-2xl font-bold mb-6">📋 Riwayat Pesanan</h2>
-
-    @if($orders->isEmpty())
-        <p class="text-gray-500">Belum ada pesanan. <a href="{{ route('buyer.katalog') }}" class="text-blue-600 underline">Mulai belanja</a></p>
-    @else
-        <div class="space-y-4">
-            @foreach($orders as $order)
-            <div class="bg-white rounded-lg shadow p-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="font-bold">{{ $order->book->title }}</p>
-                        <p class="text-sm text-gray-500">Qty: {{ $order->quantity }}</p>
-                        <p class="text-sm text-gray-500">Alamat: {{ $order->shipping_address }}</p>
-                        <p class="text-sm text-gray-400">{{ $order->created_at->format('d M Y, H:i') }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-bold text-blue-600">
-                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
-                        </p>
-                        <span class="inline-block mt-1 px-2 py-1 text-xs rounded-full
-                            {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                            {{ $order->status === 'paid' ? 'bg-blue-100 text-blue-700' : '' }}
-                            {{ $order->status === 'shipped' ? 'bg-purple-100 text-purple-700' : '' }}
-                            {{ $order->status === 'completed' ? 'bg-green-100 text-green-700' : '' }}
-                            {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}">
-                            {{ ucfirst($order->status) }}
-                        </span>
-                    </div>
+        <div class="card">
+            <div class="card-header"><h2>Pesanan Terbaru</h2></div>
+            <div class="card-body">
+                <div class="empty-state">
+                    <div class="icon">📦</div>
+                    <h3>Belum ada pesanan</h3>
+                    <p>Mulai berbelanja buku-buku pilihan kami sekarang</p>
+                    <a href="#" class="btn btn-amber">Jelajahi Toko</a>
                 </div>
             </div>
-            @endforeach
         </div>
-    @endif
-    @endisset
 
+        <div class="card">
+            <div class="card-header"><h2>Buku Favorit Anda</h2></div>
+            <div class="card-body">
+                <div class="empty-state">
+                    <div class="icon">❤️</div>
+                    <h3>Belum ada favorit</h3>
+                    <p>Tambahkan buku favorit Anda untuk akses cepat</p>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
+
 </body>
 </html>
