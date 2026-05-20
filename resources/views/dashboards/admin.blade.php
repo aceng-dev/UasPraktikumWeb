@@ -3,133 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Admin Dashboard — AnoKind</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink:     #1a1209;
+            --paper:   #f5f0e8;
+            --cream:   #ede8dc;
+            --amber:   #c8862a;
+            --amber-light: #e8a84a;
+            --muted:   #7a6e5f;
+            --danger:  #b94040;
+            --success: #3a7d44;
+            --border:  #d4cdc0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        .layout { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 240px;
+            background: var(--ink);
+            color: var(--paper);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--amber-light);
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid #333;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-brand span { display: block; font-size: 0.7rem; font-family: 'DM Sans', sans-serif; color: var(--muted); font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+        .sidebar-nav { padding: 1.5rem 0; flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #a09585;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 400;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--paper);
+            background: rgba(200, 134, 42, 0.15);
+            border-right: 3px solid var(--amber);
+        }
+
+        .nav-icon { font-size: 1rem; width: 1.2rem; text-align: center; }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #333;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .sidebar-footer strong { display: block; color: var(--paper); margin-bottom: 0.25rem; }
+        .sidebar-footer a { color: var(--amber-light); text-decoration: none; }
+
+        .main { flex: 1; padding: 2.5rem; overflow-x: hidden; }
+
+        .page-header { margin-bottom: 2.5rem; }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--ink);
+            line-height: 1.1;
+        }
+
+        .page-header p { color: var(--muted); margin-top: 0.4rem; font-size: 0.9rem; }
+
+        .alert {
+            padding: 0.85rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .alert-success { background: #e8f5eb; color: var(--success); border: 1px solid #b8dfc0; }
+        .alert-error   { background: #fdecea; color: var(--danger);  border: 1px solid #f5c6c6; }
+
+        .stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+        .stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--ink); margin-top: 0.25rem; }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--ink);
+            background: var(--paper);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px rgba(200, 134, 42, 0.12);
+            background: white;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary  { background: var(--amber); color: white; }
+        .btn-primary:hover { background: #b07020; }
+
+        .btn-secondary { background: var(--cream); color: var(--ink); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--border); }
+
+        .btn-danger { background: #f5c6c6; color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th {
+            background: var(--cream);
+            text-align: left;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        td { 
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--cream);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafaf8; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .badge-admin { background: #e3f2fd; color: #1976d2; }
+        .badge-reader { background: #f3e5f5; color: #7b1fa2; }
+        .badge-author { background: #fff3e0; color: #e65100; }
+        .badge-publisher { background: #e0f2f1; color: #00796b; }
+        .badge-buyer { background: #fce4ec; color: #c2185b; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--muted);
+        }
+
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+        .empty-state h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--ink); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar-brand, .nav-item span, .sidebar-footer { display: none; }
+            .main { padding: 1.5rem; }
+            .filter-section { flex-direction: column; }
+            .filter-group { min-width: 100%; }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 
-{{-- NAVBAR --}}
-<nav class="bg-white shadow px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-blue-600">📚 Admin</h1>
-    <div class="flex gap-4">
-        <a href="{{ route('admin.dashboard') }}" class="text-gray-600 hover:text-blue-600">Dashboard</a>
-        <form method="POST" action="{{ route('logout') }}" class="inline">
-            @csrf
-            <button type="submit" class="text-red-500 hover:text-red-700">Logout</button>
-        </form>
-    </div>
-</nav>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            AnoKind
+            <span>Admin</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ route('admin.dashboard') }}" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Manajemen User</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📚</span>
+                <span>Naskah</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span>Laporan</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <strong>{{ Auth::user()->name }}</strong>
+            {{ Auth::user()->email }}<br>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+        </div>
+    </aside>
 
-<div class="max-w-6xl mx-auto px-4 py-8">
+    <main class="main">
+        <div class="page-header">
+            <h1>📊 Admin Dashboard</h1>
+            <p>Kelola pengguna dan sistem AnoKind</p>
+        </div>
 
-    {{-- FLASH MESSAGES --}}
-    @if(session('success'))
-        <div class="bg-green-100 text-green-700 px-4 py-3 rounded mb-6">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="bg-red-100 text-red-700 px-4 py-3 rounded mb-6">
-            {{ session('error') }}
-        </div>
-    @endif
+        @if(session('success'))
+            <div class="alert alert-success">
+                ✓ {{ session('success') }}
+            </div>
+        @endif
 
-    {{-- STATISTIK CARD --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <p class="text-gray-500 text-sm">Total User</p>
-            <p class="text-2xl font-bold text-blue-600">{{ $totalUsers }}</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <p class="text-gray-500 text-sm">Admin</p>
-            <p class="text-2xl font-bold text-green-600">{{ $totalAdmins }}</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <p class="text-gray-500 text-sm">Reader</p>
-            <p class="text-2xl font-bold text-purple-600">{{ $totalReaders }}</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <p class="text-gray-500 text-sm">Author</p>
-            <p class="text-2xl font-bold text-orange-600">{{ $totalAuthors }}</p>
-        </div>
-    </div>
+        @if(session('error'))
+            <div class="alert alert-error">
+                ✗ {{ session('error') }}
+            </div>
+        @endif
 
-    {{-- MANAJEMEN USER --}}
-    <h2 class="text-2xl font-bold mb-4">📋 Manajemen User</h2>
-
-    {{-- Filter & Pencarian --}}
-    <form method="GET" action="{{ route('admin.dashboard') }}" class="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap gap-3 items-end">
-        <div class="flex-1 min-w-[150px]">
-            <label class="block text-sm text-gray-600 mb-1">Cari Nama/Email</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik kata kunci..."
-                   class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total User</div>
+                <div class="stat-value">{{ $totalUsers ?? 0 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Admin</div>
+                <div class="stat-value">{{ $totalAdmins ?? 0 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Reader</div>
+                <div class="stat-value">{{ $totalReaders ?? 0 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Author</div>
+                <div class="stat-value">{{ $totalAuthors ?? 0 }}</div>
+            </div>
         </div>
-        <div class="w-40">
-            <label class="block text-sm text-gray-600 mb-1">Role</label>
-            <select name="role" class="w-full border rounded px-3 py-2 text-sm">
-                <option value="">Semua Role</option>
-                <option value="admin" {{ request('role')=='admin' ? 'selected' : '' }}>Admin</option>
-                <option value="reader" {{ request('role')=='reader' ? 'selected' : '' }}>Reader</option>
-                <option value="author" {{ request('role')=='author' ? 'selected' : '' }}>Author</option>
-            </select>
-        </div>
-        <div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Filter</button>
-            <a href="{{ route('admin.dashboard') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 ml-2">Reset</a>
-        </div>
-    </form>
 
-    {{-- Tabel User --}}
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-600">
-                <tr>
-                    <th class="text-left px-4 py-3">ID</th>
-                    <th class="text-left px-4 py-3">Nama</th>
-                    <th class="text-left px-4 py-3">Email</th>
-                    <th class="text-left px-4 py-3">Role</th>
-                    <th class="text-center px-4 py-3">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($users as $user)
-                <tr class="border-t">
-                    <td class="px-4 py-3">{{ $user->id }}</td>
-                    <td class="px-4 py-3 font-semibold">{{ $user->name }}</td>
-                    <td class="px-4 py-3">{{ $user->email }}</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-block px-2 py-1 text-xs rounded-full
-                            @if($user->role == 'admin') bg-blue-100 text-blue-700
-                            @elseif($user->role == 'reader') bg-purple-100 text-purple-700
-                            @else bg-orange-100 text-orange-700 @endif">
-                            {{ ucfirst($user->role) }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        @if($user->role != 'admin' || auth()->id() != $user->id)
-                        <form action="{{ route('admin.delete-user', $user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus user {{ $user->name }}?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
-                        </form>
-                        @else
-                        <span class="text-gray-400 text-xs">Diri sendiri</span>
-                        @endif
-                    </td>
-                </tr>
-                @empty
-                <tr class="border-t">
-                    <td colspan="5" class="px-4 py-6 text-center text-gray-500">Tidak ada user ditemukan.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>👥 Manajemen User</h2>
+            </div>
 
-    {{-- Pagination --}}
-    <div class="mt-4">
-        {{ $users->withQueryString()->links() }}
-    </div>
+            <div class="filter-section">
+                <form method="GET" action="{{ route('admin.dashboard') }}" style="display: flex; gap: 1rem; flex-wrap: wrap; width: 100%; align-items: flex-end;">
+                    <div class="filter-group">
+                        <label class="filter-label">Cari Nama/Email</label>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik kata kunci..." class="form-control">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Role</label>
+                        <select name="role" class="form-control">
+                            <option value="">Semua Role</option>
+                            <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="reader" {{ request('role') === 'reader' ? 'selected' : '' }}>Reader</option>
+                            <option value="author" {{ request('role') === 'author' ? 'selected' : '' }}>Author</option>
+                            <option value="publisher" {{ request('role') === 'publisher' ? 'selected' : '' }}>Publisher</option>
+                            <option value="buyer" {{ request('role') === 'buyer' ? 'selected' : '' }}>Buyer</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($users as $user)
+                        <tr>
+                            <td>#{{ $user->id }}</td>
+                            <td><strong>{{ $user->name }}</strong></td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                <span class="badge badge-{{ $user->role }}">{{ ucfirst($user->role) }}</span>
+                            </td>
+                            <td style="text-align: center;">
+                                @if($user->role != 'admin' || auth()->id() != $user->id)
+                                    <form action="{{ route('admin.delete-user', $user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus user {{ $user->name }}?')" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">Hapus</button>
+                                    </form>
+                                @else
+                                    <span style="font-size: 0.85rem; color: var(--muted);">—</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <div class="icon">👤</div>
+                                    <h3>Tidak ada user</h3>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @if(isset($users) && method_exists($users, 'links'))
+            <div style="margin-top: 2rem;">
+                {{ $users->withQueryString()->links() }}
+            </div>
+        @endif
+    </main>
 </div>
 
 </body>

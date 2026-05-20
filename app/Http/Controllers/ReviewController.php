@@ -87,9 +87,8 @@ class ReviewController extends Controller
 
         session()->flash('hasil_ai',(string) $ringkasan);
     } catch (\Exception $e) {
-        session()->flash('error_ai', 'AI sedang sibuk atau tidak tersedia, coba lagi beberapa saat.');
+    session()->flash('error_ai', $e->getMessage());
     }
-
     return redirect()->back();
 }
 }

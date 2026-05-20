@@ -301,7 +301,7 @@
     {{-- ── SIDEBAR ── --}}
     <aside class="sidebar">
         <div class="sidebar-brand">
-            Wetpad
+            AnoKind
             <span>Author Studio</span>
         </div>
 
