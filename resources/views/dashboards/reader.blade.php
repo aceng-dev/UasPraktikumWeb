@@ -345,19 +345,19 @@
             <span>Reader</span>
         </div>
         <nav class="sidebar-nav">
-            <a href="{{ route('reader.index') }}" class="nav-item active">
+            <a href="{{ route('reader.index') }}" class="nav-item {{ $page == 'katalog' ? 'active' : '' }}">
                 <span class="nav-icon">📖</span>
                 <span>Katalog</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{{ route('reader.koleksi') }}" class="nav-item {{ $page == 'koleksi' ? 'active' : '' }}">
                 <span class="nav-icon">📚</span>
                 <span>Koleksi</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{{ route('reader.favorit') }}" class="nav-item {{ $page == 'favorit' ? 'active' : '' }}">
                 <span class="nav-icon">⭐</span>
                 <span>Favorit</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{{ route('reader.bookmark') }}" class="nav-item {{ $page == 'bookmark' ? 'active' : '' }}">
                 <span class="nav-icon">🔖</span>
                 <span>Bookmark</span>
             </a>
@@ -506,6 +506,111 @@
                     </div>
                 </div>
             </div>
+
+        {{-- ================= TAMPILAN KOLEKSI ================= --}}
+        @elseif($page == 'koleksi')
+            <div class="page-header">
+                <h1>📚 Koleksi Saya</h1>
+                <p>Buku-buku yang telah Anda baca dan berikan ulasan</p>
+            </div>
+
+            <div class="catalog-grid">
+                @foreach($naskahs as $naskah)
+                    <div class="book-card">
+                        <div class="book-header">
+                            <span class="book-badge {{ $naskah->price == 0 ? 'free' : 'paid' }}">
+                                {{ $naskah->price == 0 ? 'Gratis' : 'Berbayar' }}
+                            </span>
+                            <span class="book-author">{{ $naskah->author->name ?? 'Unknown' }}</span>
+                        </div>
+                        <div class="book-body">
+                            <h3 class="book-title">{{ $naskah->title }}</h3>
+                            <p class="book-excerpt">{{ Str::limit($naskah->content, 150) }}</p>
+                            <div class="book-footer">
+                                <a href="{{ route('reader.baca', $naskah->id) }}" class="btn btn-primary">Baca</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if(!$naskahs || $naskahs->count() == 0)
+                <div class="empty-state">
+                    <div class="icon">📚</div>
+                    <p>Koleksi Anda masih kosong</p>
+                    <p style="font-size: 0.85rem; color: var(--muted);">Baca naskah dan berikan ulasan untuk menambahkan ke koleksi</p>
+                </div>
+            @endif
+
+        {{-- ================= TAMPILAN FAVORIT ================= --}}
+        @elseif($page == 'favorit')
+            <div class="page-header">
+                <h1>⭐ Buku Favorit Saya</h1>
+                <p>Buku-buku yang Anda beri rating 5 bintang</p>
+            </div>
+
+            <div class="catalog-grid">
+                @foreach($naskahs as $naskah)
+                    <div class="book-card">
+                        <div class="book-header">
+                            <span class="book-badge {{ $naskah->price == 0 ? 'free' : 'paid' }}">
+                                {{ $naskah->price == 0 ? 'Gratis' : 'Berbayar' }}
+                            </span>
+                            <span class="book-author">{{ $naskah->author->name ?? 'Unknown' }}</span>
+                        </div>
+                        <div class="book-body">
+                            <h3 class="book-title">{{ $naskah->title }}</h3>
+                            <p class="book-excerpt">{{ Str::limit($naskah->content, 150) }}</p>
+                            <div class="book-footer">
+                                <a href="{{ route('reader.baca', $naskah->id) }}" class="btn btn-primary">Baca</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if(!$naskahs || $naskahs->count() == 0)
+                <div class="empty-state">
+                    <div class="icon">⭐</div>
+                    <p>Belum ada buku favorit</p>
+                    <p style="font-size: 0.85rem; color: var(--muted);">Beri rating 5 bintang pada buku untuk menambahkan ke favorit</p>
+                </div>
+            @endif
+
+        {{-- ================= TAMPILAN BOOKMARK ================= --}}
+        @elseif($page == 'bookmark')
+            <div class="page-header">
+                <h1>🔖 Bookmark Saya</h1>
+                <p>Buku-buku yang Anda anggap istimewa (rating 4-5 bintang)</p>
+            </div>
+
+            <div class="catalog-grid">
+                @foreach($naskahs as $naskah)
+                    <div class="book-card">
+                        <div class="book-header">
+                            <span class="book-badge {{ $naskah->price == 0 ? 'free' : 'paid' }}">
+                                {{ $naskah->price == 0 ? 'Gratis' : 'Berbayar' }}
+                            </span>
+                            <span class="book-author">{{ $naskah->author->name ?? 'Unknown' }}</span>
+                        </div>
+                        <div class="book-body">
+                            <h3 class="book-title">{{ $naskah->title }}</h3>
+                            <p class="book-excerpt">{{ Str::limit($naskah->content, 150) }}</p>
+                            <div class="book-footer">
+                                <a href="{{ route('reader.baca', $naskah->id) }}" class="btn btn-primary">Baca</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if(!$naskahs || $naskahs->count() == 0)
+                <div class="empty-state">
+                    <div class="icon">🔖</div>
+                    <p>Bookmark Anda masih kosong</p>
+                    <p style="font-size: 0.85rem; color: var(--muted);">Beri rating 4-5 bintang pada buku untuk menyimpan ke bookmark</p>
+                </div>
+            @endif
         @endif
     </main>
 </div>

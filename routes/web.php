@@ -37,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard',            [ReviewController::class, 'index'])->name('dashboard');
         Route::get('/',                     [ReviewController::class, 'index'])->name('index');
         Route::get('/baca/{id}',            [ReviewController::class, 'baca'])->name('baca');
+        Route::get('/koleksi',              [ReviewController::class, 'koleksi'])->name('koleksi');
+        Route::get('/favorit',              [ReviewController::class, 'favorit'])->name('favorit');
+        Route::get('/bookmark',             [ReviewController::class, 'bookmark'])->name('bookmark');
         Route::post('/review/{naskah_id}',  [ReviewController::class, 'storeReview'])->name('review.store');
         Route::post('/summary/{id}',        [ReviewController::class, 'summary'])->name('summary');
     });
